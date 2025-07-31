@@ -84,7 +84,7 @@ Context chunks:
 Please analyze the provided context and answer the question. If the context doesn't contain enough information to answer the question completely, state that clearly in your response."""
             
             response = self.client.models.generate_content(
-                model="gemini-2.5-pro",
+                model="gemini-2.5-flash",
                 contents=[
                     types.Content(role="user", parts=[types.Part(text=user_prompt)])
                 ],
