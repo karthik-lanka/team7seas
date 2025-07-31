@@ -5,6 +5,16 @@ services:
     buildCommand: pip install -r render-requirements.txt
     startCommand: uvicorn main:app --host=0.0.0.0 --port=$PORT
     plan: starter
+    buildFilter:
+      paths:
+      - main.py
+      - models.py
+      - gemini_client.py
+      - pinecone_client.py
+      - document_processor.py
+      - text_chunker.py
+      - question_answerer.py
+      - render-requirements.txt
     region: oregon
     branch: main
     healthCheckPath: /health

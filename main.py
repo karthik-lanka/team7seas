@@ -89,7 +89,7 @@ async def process_documents(request: ProcessRequest, token: str = Depends(verify
             results = list(executor.map(process_single_question, question_data))
         
         # Sort answers by original question order
-        answers = [None] * len(request.questions)
+        answers = [""] * len(request.questions)
         for index, answer in results:
             answers[index] = answer
         

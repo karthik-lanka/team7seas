@@ -1,152 +1,190 @@
-# Deployment Checklist for Render
+# ✅ Deployment Checklist for HackRx API
 
-Use this checklist to ensure your HackRx Document Processing API is ready for deployment on Render.
+## Pre-Deployment Verification
 
-## ✅ Pre-Deployment Checklist
+### 🔧 Environment Setup
+- [ ] Python 3.11+ installed
+- [ ] All dependencies installed from `render-requirements.txt`
+- [ ] Environment variables set:
+  - [ ] `GEMINI_API_KEY` (required)
+  - [ ] `PINECONE_API_KEY` (required)
+  - [ ] `PINECONE_INDEX` (optional, defaults to "hackrx-documents")
+  - [ ] `PINECONE_ENV` (optional, defaults to "us-east-1-aws")
 
-### Repository Setup
-- [ ] All code files are in GitHub repository
-- [ ] `requirements.txt` created from `render-requirements.txt` 
-- [ ] `main.py` has proper uvicorn entry point
-- [ ] All API endpoints tested locally
-- [ ] No hardcoded secrets in code
-
-### Required Files Check
+### 📁 Required Files Present
 - [ ] `main.py` - FastAPI application
-- [ ] `requirements.txt` - Python dependencies
-- [ ] `document_processor.py` - Document processing
-- [ ] `text_chunker.py` - Text chunking
-- [ ] `gemini_client.py` - Gemini AI integration
-- [ ] `pinecone_client.py` - Pinecone database
-- [ ] `question_answerer.py` - Q&A logic
 - [ ] `models.py` - Pydantic models
-- [ ] `README.md` - Documentation
-- [ ] `deploy.md` - Deployment guide
+- [ ] `gemini_client.py` - Gemini AI integration
+- [ ] `pinecone_client.py` - Pinecone vector database
+- [ ] `document_processor.py` - PDF/DOCX processing
+- [ ] `text_chunker.py` - Text chunking logic
+- [ ] `question_answerer.py` - Q&A orchestration
+- [ ] `render.yaml` - Render deployment blueprint
+- [ ] `render-requirements.txt` - Production dependencies
+- [ ] `Dockerfile` - Container deployment (optional)
 
-### API Testing
-- [ ] Health endpoint (`/health`) responds correctly
-- [ ] Main endpoint (`/hackrx/run`) processes documents
-- [ ] Bearer token authentication works
-- [ ] All three required headers tested:
-  - [ ] `Content-Type: application/json`
-  - [ ] `Accept: application/json`
-  - [ ] `Authorization: Bearer 9953d967b81381295864fb71b20cd27085ee80c24512eeabce64f3f921bb009d`
-
-### API Keys and Secrets
-- [ ] Google Gemini API key obtained and tested
-- [ ] Pinecone API key obtained and tested
-- [ ] Both keys have proper permissions
-- [ ] Keys are NOT in repository code
-
-## 🚀 Render Deployment Steps
-
-### 1. Service Creation
-- [ ] Render account created
-- [ ] GitHub repository connected
-- [ ] Web Service created from repository
-- [ ] Python 3 environment selected
-
-### 2. Build Configuration
-- [ ] Build Command: `pip install -r requirements.txt`
-- [ ] Start Command: `uvicorn main:app --host=0.0.0.0 --port=$PORT`
-- [ ] Correct branch selected (usually `main`)
-- [ ] Instance type chosen (Starter recommended)
-
-### 3. Environment Variables
-- [ ] `GEMINI_API_KEY` added with your Google API key
-- [ ] `PINECONE_API_KEY` added with your Pinecone API key
-- [ ] Optional: `PINECONE_INDEX` (default: hackrx-documents)
-- [ ] Optional: `PINECONE_ENV` (default: us-east-1)
-
-### 4. Deployment Verification
-- [ ] Service deployed successfully
-- [ ] No build errors in logs
-- [ ] Service is running (not crashed)
-- [ ] Health check responds: `GET https://your-app.onrender.com/health`
-
-### 5. API Testing on Render
-Test with the complete curl command:
+### 🧪 Local Testing
+Run automated pre-deployment check:
 ```bash
-curl -X POST https://your-app-name.onrender.com/hackrx/run \
-  -H "Content-Type: application/json" \
-  -H "Accept: application/json" \
+python deployment_checker.py pre
+```
+
+Expected output: `🎉 ALL PRE-DEPLOYMENT CHECKS PASSED!`
+
+### 🏥 API Health Verification
+```bash
+# Start local server
+uvicorn main:app --host=0.0.0.0 --port=5000
+
+# Test health endpoint
+curl http://localhost:5000/health
+
+# Test API functionality  
+python deployment_checker.py post
+```
+
+Expected: All checks pass with "EXCELLENT" performance rating
+
+## Render.com Deployment Steps
+
+### 🔗 Repository Setup
+- [ ] Code pushed to GitHub repository
+- [ ] Repository is public or accessible to Render
+- [ ] All required files are committed and pushed
+
+### 🌐 Render Service Creation
+1. [ ] Sign in to [render.com](https://render.com)
+2. [ ] Click **"New"** → **"Blueprint"**
+3. [ ] Connect GitHub account if needed
+4. [ ] Select repository containing HackRx API
+5. [ ] Render detects `render.yaml` automatically
+
+### 🔑 Environment Variables Configuration
+In Render dashboard, set:
+- [ ] `GEMINI_API_KEY` = your actual Gemini API key
+- [ ] `PINECONE_API_KEY` = your actual Pinecone API key
+
+**Critical**: Never commit API keys to repository!
+
+### 🚀 Deployment Execution
+- [ ] Click **"Apply"** to start deployment
+- [ ] Monitor build logs for any errors
+- [ ] Wait for "Live" status (typically 5-10 minutes)
+- [ ] Note the assigned `.onrender.com` URL
+
+## Post-Deployment Verification
+
+### 🎯 Automated Testing
+```bash
+# Test deployed API (replace with your URL)
+python deployment_checker.py post https://your-app.onrender.com
+```
+
+Expected output: `🎉 DEPLOYMENT VERIFICATION SUCCESSFUL!`
+
+### 🔍 Manual Verification Steps
+
+#### 1. Health Check
+```bash
+curl https://your-app.onrender.com/health
+```
+Expected: `{"status":"healthy","service":"HackRx Document Processing API"}`
+
+#### 2. Root Endpoint
+```bash
+curl https://your-app.onrender.com/
+```
+Expected: Service information with endpoints list
+
+#### 3. API Documentation
+Visit: `https://your-app.onrender.com/docs`
+Expected: Interactive Swagger UI documentation
+
+#### 4. Full API Test
+```bash
+curl -X POST https://your-app.onrender.com/hackrx/run \
   -H "Authorization: Bearer 9953d967b81381295864fb71b20cd27085ee80c24512eeabce64f3f921bb009d" \
+  -H "Content-Type: application/json" \
   -d '{
-    "documents": "https://www.orimi.com/pdf-test.pdf",
-    "questions": ["What is this document about?"]
+    "documents": "https://hackrx.blob.core.windows.net/assets/policy.pdf?sv=2023-01-03&st=2025-07-04T09%3A11%3A24Z&se=2027-07-05T09%3A11%3A00Z&sr=b&sp=r&sig=N4a9OU0w0QXO6AOIBiu4bpl7AXvEZogeT%2FjUHNO7HzQ%3D",
+    "questions": [
+        "What is the grace period for premium payment?",
+        "What is the waiting period for pre-existing diseases?"
+    ]
   }'
 ```
 
-Expected response format:
-```json
-{
-  "answers": ["The document is about..."]
-}
-```
+Expected: JSON response with accurate answers in under 30 seconds
 
-## 🔧 Post-Deployment Tasks
+## Performance Benchmarks
 
-### Monitoring Setup
-- [ ] Check Render dashboard for service health
-- [ ] Monitor logs for any errors
-- [ ] Verify resource usage is within limits
-- [ ] Set up alerts if needed
+### ⚡ Speed Targets
+- [ ] Document processing: < 5 seconds for 43 chunks
+- [ ] Single question: < 10 seconds
+- [ ] Multiple questions (5): < 30 seconds
+- [ ] Overall API response: < 45 seconds
 
-### Performance Testing
-- [ ] Test with larger PDF documents
-- [ ] Test with multiple questions
-- [ ] Verify response times are acceptable
-- [ ] Monitor memory and CPU usage
+### 🎯 Accuracy Verification
+Test questions should return accurate, detailed answers:
+- [ ] Grace period: "30 days"
+- [ ] PED waiting period: "36 months"
+- [ ] Maternity coverage: Comprehensive details
+- [ ] No hallucinated information
 
-### Documentation Updates
-- [ ] Update README.md with live Render URL
-- [ ] Share API documentation with team
-- [ ] Document any environment-specific configurations
+## Troubleshooting Guide
 
-## 🚨 Troubleshooting Guide
+### 🛠️ Common Issues & Solutions
 
-### Common Build Issues
-- **Dependencies not installing**: Check `requirements.txt` format
-- **Python version errors**: Ensure Python 3.11+ compatibility
-- **Memory issues**: Upgrade to Starter plan or higher
+#### Build Failures
+- [ ] Check `render-requirements.txt` syntax
+- [ ] Verify package versions are available on PyPI
+- [ ] Review build logs in Render dashboard
 
-### Runtime Issues
-- **Service crashes on startup**: Check environment variables
-- **API key errors**: Verify keys are valid and properly set
-- **Pinecone connection errors**: Check API key and region settings
-- **Gemini API errors**: Verify API key has proper permissions
+#### Health Check Failures
+- [ ] Verify `uvicorn main:app` starts correctly
+- [ ] Check port binding uses `$PORT` environment variable
+- [ ] Review application startup logs
 
-### API Issues
-- **401 Unauthorized**: Check bearer token in Authorization header
-- **404 Not Found**: Verify endpoint URL is correct
-- **500 Internal Server Error**: Check service logs for details
-- **Timeout errors**: Consider upgrading instance type
+#### API Errors
+- [ ] Confirm environment variables are set correctly
+- [ ] Verify Gemini API key has proper permissions
+- [ ] Test Pinecone API key and index access
+- [ ] Check request format matches API specification
+
+#### Performance Issues
+- [ ] Monitor API rate limits for Gemini/Pinecone
+- [ ] Check for memory/CPU constraints in logs
+- [ ] Verify batch processing is working correctly
+
+### 📋 Deployment Status Matrix
+
+| Component | Local | Render | Status |
+|-----------|-------|--------|--------|
+| Health Check | ⭕ | ⭕ | Pending |
+| Root Endpoint | ⭕ | ⭕ | Pending |
+| Document Processing | ⭕ | ⭕ | Pending |
+| Question Answering | ⭕ | ⭕ | Pending |
+| Performance < 30s | ⭕ | ⭕ | Pending |
+
+Fill in: ✅ Pass, ❌ Fail, ⭕ Not Tested
+
+## 🎉 Success Criteria
+
+Deployment is successful when:
+- [ ] All automated checks pass
+- [ ] Health endpoint returns 200 OK
+- [ ] API processes documents and answers questions
+- [ ] Response time is under 30 seconds
+- [ ] Answers are accurate and detailed
+- [ ] No errors in application logs
 
 ## 📞 Support Resources
 
-- **Render Documentation**: https://render.com/docs
-- **Render Community**: https://community.render.com
-- **Google Gemini API**: https://ai.google.dev/docs
-- **Pinecone Documentation**: https://docs.pinecone.io
-
-## ✅ Final Verification
-
-Before marking deployment complete:
-- [ ] API responds to health checks
-- [ ] Document processing works end-to-end
-- [ ] Questions are answered correctly
-- [ ] All headers are properly handled
-- [ ] Error handling works as expected
-- [ ] Performance is acceptable
-- [ ] Logs show no critical errors
-
-**Deployment Status**: 
-- [ ] **READY FOR PRODUCTION** - All checks passed
-- [ ] **NEEDS FIXES** - See issues above
-- [ ] **IN PROGRESS** - Still completing checklist
+- **Render Documentation**: [render.com/docs](https://render.com/docs)
+- **Deployment Checker**: `python deployment_checker.py`
+- **Complete Guide**: See `RENDER_DEPLOYMENT_GUIDE.md`
+- **API Documentation**: Visit `/docs` endpoint after deployment
 
 ---
 
-**Date Completed**: ___________  
-**Deployed By**: ___________  
-**Render Service URL**: ___________
+**🚀 Ready to deploy? Start with the pre-deployment check and follow each step carefully!**

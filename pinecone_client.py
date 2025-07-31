@@ -103,7 +103,7 @@ class PineconeClient:
                     self._embedding_cache[chunk_hash] = embedding
         
         # Combine cached and new embeddings in correct order
-        final_embeddings = [None] * len(chunks)
+        final_embeddings: List[List[float]] = [[] for _ in range(len(chunks))]
         
         # Fill in cached embeddings
         for idx, embedding in cached_embeddings:
