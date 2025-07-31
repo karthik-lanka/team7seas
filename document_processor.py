@@ -1,5 +1,5 @@
 import requests
-import fitz  # PyMuPDF
+import pymupdf as fitz  # PyMuPDF
 from docx import Document
 import tempfile
 import os

@@ -65,9 +65,9 @@ async def process_documents(request: ProcessRequest, token: str = Depends(verify
         
         logger.info(f"Created {len(chunks)} text chunks")
         
-        # Generate embeddings and store in Pinecone
+        # Generate embeddings and store in Pinecone with document isolation
         logger.info("Generating embeddings and storing in Pinecone")
-        pinecone_client.store_chunks(chunks, gemini_client)
+        pinecone_client.store_chunks(chunks, gemini_client, str(request.documents))
         
         # Answer questions
         logger.info("Processing questions")
@@ -75,7 +75,7 @@ async def process_documents(request: ProcessRequest, token: str = Depends(verify
         for i, question in enumerate(request.questions):
             logger.info(f"Processing question {i+1}/{len(request.questions)}: {question[:100]}...")
             try:
-                answer = question_answerer.answer_question(question)
+                answer = question_answerer.answer_question(question, str(request.documents))
                 answers.append(answer)
             except Exception as e:
                 logger.error(f"Error processing question {i+1}: {str(e)}")
@@ -92,6 +92,21 @@ async def process_documents(request: ProcessRequest, token: str = Depends(verify
             status_code=500,
             detail=f"Internal server error: {str(e)}"
         )
+
+@app.get("/")
+async def root():
+    """Root endpoint with API information"""
+    return {
+        "service": "HackRx Document Processing API",
+        "version": "1.0.0", 
+        "status": "running",
+        "endpoints": {
+            "POST /hackrx/run": "Process documents and answer questions",
+            "GET /health": "Health check",
+            "GET /docs": "Interactive API documentation"
+        },
+        "docs": "/docs"
+    }
 
 @app.get("/health")
 async def health_check():

@@ -13,23 +13,25 @@ class QuestionAnswerer:
         self.pinecone_client = pinecone_client
         logger.info("Question answerer initialized")
     
-    def answer_question(self, question: str) -> str:
+    def answer_question(self, question: str, document_url: str) -> str:
         """
         Answer a question using semantic search and AI generation
         
         Args:
             question: The question to answer
+            document_url: Source document URL for namespace isolation
             
         Returns:
             The answer as a string
         """
         try:
-            # Search for relevant chunks
+            # Search for relevant chunks in the specific document namespace
             logger.info(f"Searching for relevant chunks for question: {question[:100]}...")
             relevant_chunks = self.pinecone_client.search_relevant_chunks(
                 query=question,
                 gemini_client=self.gemini_client,
-                top_k=5
+                document_url=document_url,
+                top_k=8  # Increased for better context
             )
             
             if not relevant_chunks:

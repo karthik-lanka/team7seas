@@ -6,3 +6,14 @@ pymupdf>=1.26.3
 python-docx>=1.2.0
 google-genai>=1.28.0
 pinecone>=5.0.0
+docx
+fastapi
+google-genai
+pinecone-client
+pydantic
+pymupdf
+python-docx
+requests
+sift-stack-py
+uvicorn[standard]
+pymupdf
