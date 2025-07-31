@@ -17,8 +17,10 @@ A FastAPI backend application that processes PDF and DOCX documents, extracts te
 
 Process documents and answer questions using AI.
 
-**Authentication**: Bearer token required
+**Required Headers**:
 ```
+Content-Type: application/json
+Accept: application/json
 Authorization: Bearer 9953d967b81381295864fb71b20cd27085ee80c24512eeabce64f3f921bb009d
 ```
 
@@ -69,8 +71,9 @@ Optional environment variables:
 ## Usage Example
 
 ```bash
-curl -X POST https://your-repl-url.replit.app/hackrx/run \
+curl -X POST https://your-app-url.onrender.com/hackrx/run \
   -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
   -H "Authorization: Bearer 9953d967b81381295864fb71b20cd27085ee80c24512eeabce64f3f921bb009d" \
   -d '{
     "documents": "https://www.orimi.com/pdf-test.pdf",
