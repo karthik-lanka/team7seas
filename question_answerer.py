@@ -31,7 +31,7 @@ class QuestionAnswerer:
                 query=question,
                 gemini_client=self.gemini_client,
                 document_url=document_url,
-                top_k=8  # Increased for better context
+                top_k=6  # Optimized for speed while maintaining accuracy
             )
             
             if not relevant_chunks:

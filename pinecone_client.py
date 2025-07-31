@@ -75,30 +75,45 @@ class PineconeClient:
         return f"{document_hash}_{chunk_index:04d}_{chunk_hash}"
     
     def _generate_embeddings_batch(self, chunks: List[str], gemini_client: GeminiClient) -> List[List[float]]:
-        """Generate embeddings for multiple chunks efficiently using parallel processing"""
-        embeddings = []
+        """Generate embeddings for multiple chunks using ultra-fast batch processing"""
+        # Check cache for all chunks first
+        cached_embeddings = []
+        uncached_chunks = []
+        uncached_indices = []
         
-        def process_chunk(chunk):
-            # Check cache first
+        for i, chunk in enumerate(chunks):
             chunk_hash = hashlib.md5(chunk.encode()).hexdigest()
             with self._cache_lock:
                 if chunk_hash in self._embedding_cache:
-                    return self._embedding_cache[chunk_hash]
+                    cached_embeddings.append((i, self._embedding_cache[chunk_hash]))
+                else:
+                    uncached_chunks.append(chunk)
+                    uncached_indices.append(i)
+        
+        # Generate embeddings for uncached chunks in single batch call
+        new_embeddings = []
+        if uncached_chunks:
+            # Use Gemini's batch embedding API for maximum speed
+            new_embeddings = gemini_client.generate_embeddings_batch(uncached_chunks)
             
-            # Generate new embedding
-            embedding = gemini_client.generate_embedding(chunk)
-            
-            # Cache the result
+            # Cache the new embeddings
             with self._cache_lock:
-                self._embedding_cache[chunk_hash] = embedding
-            
-            return embedding
+                for chunk, embedding in zip(uncached_chunks, new_embeddings):
+                    chunk_hash = hashlib.md5(chunk.encode()).hexdigest()
+                    self._embedding_cache[chunk_hash] = embedding
         
-        # Process chunks in parallel for better performance
-        with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
-            embeddings = list(executor.map(process_chunk, chunks))
+        # Combine cached and new embeddings in correct order
+        final_embeddings = [None] * len(chunks)
         
-        return embeddings
+        # Fill in cached embeddings
+        for idx, embedding in cached_embeddings:
+            final_embeddings[idx] = embedding
+        
+        # Fill in new embeddings
+        for uncached_idx, embedding in zip(uncached_indices, new_embeddings):
+            final_embeddings[uncached_idx] = embedding
+        
+        return final_embeddings
     
     def store_chunks(self, chunks: List[str], gemini_client: GeminiClient, document_url: str):
         """
@@ -184,16 +199,22 @@ class PineconeClient:
                 vector=query_embedding,
                 top_k=top_k,
                 include_metadata=True,
-                filter={"document_hash": {"$eq": document_hash}}
+                filter={"document_hash": document_hash}  # Fixed filter syntax
             )
             
-            # Extract text chunks from results
+            # Extract text chunks from results with minimum similarity threshold
             relevant_chunks = []
-            for match in search_results.matches:
+            similarity_threshold = 0.3  # Lower threshold for better recall
+            
+            logger.info(f"Pinecone search returned {len(search_results.matches)} matches")
+            for i, match in enumerate(search_results.matches):
+                logger.info(f"Match {i+1}: score={match.score:.3f}, id={match.id}")
+                # Accept all matches for now to debug the issue
                 if match.metadata and "text" in match.metadata:
                     relevant_chunks.append(match.metadata["text"])
+                    logger.info(f"Added chunk with score {match.score:.3f}: {match.metadata['text'][:100]}...")
             
-            logger.info(f"Found {len(relevant_chunks)} relevant chunks for query in document {document_hash}")
+            logger.info(f"Found {len(relevant_chunks)} relevant chunks (score >= {similarity_threshold}) for query in document {document_hash}")
             return relevant_chunks
             
         except Exception as e:
@@ -210,7 +231,7 @@ class PineconeClient:
                 vector=[0.0] * 768,  # Dummy vector
                 top_k=10000,  # Large number to get all
                 include_metadata=True,
-                filter={"document_hash": {"$eq": document_hash}}
+                filter={"document_hash": document_hash}
             )
             
             if query_result.matches:

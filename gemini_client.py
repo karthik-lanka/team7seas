@@ -53,6 +53,38 @@ class GeminiClient:
             logger.error(f"Error generating embedding: {str(e)}")
             raise Exception(f"Failed to generate embedding: {str(e)}")
     
+    def generate_embeddings_batch(self, texts: List[str]) -> List[List[float]]:
+        """
+        Generate embeddings for multiple texts in a single API call for maximum speed
+        
+        Args:
+            texts: List of texts to embed
+            
+        Returns:
+            List of embedding vectors
+        """
+        try:
+            # Use batch embedding for much faster processing
+            result = self.client.models.embed_content(
+                model="text-embedding-004",
+                contents=texts
+            )
+            
+            embeddings = []
+            if hasattr(result, 'embeddings') and result.embeddings:
+                for embedding in result.embeddings:
+                    if hasattr(embedding, 'values'):
+                        embeddings.append(list(embedding.values))
+                    else:
+                        raise Exception("Embedding object has no 'values' attribute")
+                return embeddings
+            else:
+                raise Exception("No embeddings in response")
+                
+        except Exception as e:
+            logger.error(f"Error generating batch embeddings: {str(e)}")
+            raise Exception(f"Failed to generate batch embeddings: {str(e)}")
+    
     def answer_question_with_context(self, question: str, context_chunks: List[str]) -> str:
         """
         Answer a question using provided context chunks
@@ -92,7 +124,8 @@ Please analyze the provided context and answer the question. If the context does
                     system_instruction=system_prompt,
                     response_mime_type="application/json",
                     response_schema=LegalAnswer,
-                    temperature=0.1,  # Low temperature for more consistent responses
+                    temperature=0.0,  # Zero temperature for fastest, most consistent responses
+                    max_output_tokens=2048,  # Limit output for faster generation
                 ),
             )
             

@@ -7,12 +7,12 @@ logger = logging.getLogger(__name__)
 class TextChunker:
     """Handles text chunking with overlapping segments"""
     
-    def __init__(self, chunk_size: int = 500, overlap_size: int = 100):
+    def __init__(self, chunk_size: int = 800, overlap_size: int = 150):
         """
-        Initialize text chunker
+        Initialize text chunker with optimized settings for speed and accuracy
         
         Args:
-            chunk_size: Target number of words per chunk
+            chunk_size: Target number of words per chunk (increased for fewer chunks)
             overlap_size: Number of words to overlap between chunks
         """
         self.chunk_size = chunk_size

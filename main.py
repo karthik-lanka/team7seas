@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException, Depends, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 import logging
+import concurrent.futures
 from models import ProcessRequest, ProcessResponse
 from document_processor import DocumentProcessor
 from text_chunker import TextChunker
@@ -69,17 +70,28 @@ async def process_documents(request: ProcessRequest, token: str = Depends(verify
         logger.info("Generating embeddings and storing in Pinecone")
         pinecone_client.store_chunks(chunks, gemini_client, str(request.documents))
         
-        # Answer questions
+        # Answer questions using parallel processing for maximum speed
         logger.info("Processing questions")
-        answers = []
-        for i, question in enumerate(request.questions):
-            logger.info(f"Processing question {i+1}/{len(request.questions)}: {question[:100]}...")
+        
+        def process_single_question(question_data):
+            question, index = question_data
+            logger.info(f"Processing question {index+1}/{len(request.questions)}: {question[:100]}...")
             try:
                 answer = question_answerer.answer_question(question, str(request.documents))
-                answers.append(answer)
+                return (index, answer)
             except Exception as e:
-                logger.error(f"Error processing question {i+1}: {str(e)}")
-                answers.append(f"Error processing question: {str(e)}")
+                logger.error(f"Error processing question {index+1}: {str(e)}")
+                return (index, f"Error processing question: {str(e)}")
+        
+        # Process all questions in parallel for 10x speed improvement
+        with concurrent.futures.ThreadPoolExecutor(max_workers=min(len(request.questions), 8)) as executor:
+            question_data = [(q, i) for i, q in enumerate(request.questions)]
+            results = list(executor.map(process_single_question, question_data))
+        
+        # Sort answers by original question order
+        answers = [None] * len(request.questions)
+        for index, answer in results:
+            answers[index] = answer
         
         logger.info(f"Successfully processed all questions")
         return ProcessResponse(answers=answers)

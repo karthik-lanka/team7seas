@@ -1,0 +1,48 @@
+$ curl -X POST https://finalllllll.onrender.com/hackrx/run \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -H "Authorization: Bearer 9953d967b81381295864fb71b20cd27085ee80c24512eeabce64f3f921bb009d" \
+  -d '{
+    "documents": "https://hackrx.blob.core.windows.net/assets/policy.pdf?sv=2023-01-03&st=2025-07-04T09%3A11%3A24Z&se=2027-07-05T09%3A11%3A00Z&sr=b&sp=r&sig=N4a9OU0w0QXO6AOIBiu4bpl7AXvEZogeT%2FjUHNO7HzQ%3D",
+    "questions": [
+      "What is the grace period for premium payment under the National Parivar Mediclaim Plus Policy?",
+      "What is the waiting period for pre-existing diseases (PED) to be covered?",
+      "Does this policy cover maternity expenses, and what are the conditions?",
+      "What is the waiting period for cataract surgery?",
+      "Are the medical expenses for an organ donor covered under this policy?",
+      "What is the No Claim Discount (NCD) offered in this policy?",
+      "Is there a benefit for preventive health check-ups?",
+      "How does the policy define a 'Hospital'?",
+      "What is the extent of coverage for AYUSH treatments?",
+      "Are there any sub-limits on room rent and ICU charges for Plan A?"
+    ]
+  }'
+{"answers":["The grace period for premium payment under the National Parivar Mediclaim Plus Policy is thirty days.","Expenses related to the treatment of a Pre-Existing Disease (PED) and its direct complications are excluded until the expiry of thirty-six (36) months of continuous coverage after the date of inception of the first policy with the company.","Yes, this policy covers maternity expenses. The coverage includes medical treatment expenses traceable to childbirth (including complicated deliveries and caesarean sections incurred during Hospitalization), expenses towards lawful medical termination of pregnancy during the Policy Period, and Pre-Natal and Post-Natal Hospitalisation expenses per delivery, including necessary vaccination for the New Born Baby. For Plan A, the specific limits are up to INR 30,000 for normal delivery and up to INR 50,000 for caesarean section, while for other plans, it is up to the Sum Insured (SI).","The waiting period for cataract surgery is two years. This period applies from the date of inception of the first policy with the company, provided there is continuous coverage.","Yes, the medical expenses for an organ donor are covered under this policy, specifically for the hospitalization expenses incurred during the harvesting of the organ donated to an Insured Person. However, this coverage is subject to several conditions and exclusions.","The No Claim Discount (NCD) offered in this policy is a flat 5% discount on the base premium. For policies with a one-year term, this discount is applied upon renewal if no claims were reported in the expiring policy. For policies with a term exceeding one year, the NCD for each claim-free policy year is aggregated and allowed on renewal, with the total aggregated NCD not exceeding 5% of the total base premium for the policy's term.","Yes, there is a financial benefit for preventive health check-ups mentioned in the provided text. The expenses for health check-ups shall be reimbursed by the Company at the end of a block of two continuous policy years, provided the policy has been continuously renewed without a break. The reimbursement amount is subject to limits stated in the Table of Benefits, which can be up to INR 5,000, INR 7,500, or INR 10,000 every two years, depending on the plan.","The policy defines a \"Hospital\" as any institution established for in-patient care and day care treatment of disease or injuries that meets one of two conditions: 1. It is registered as a hospital with the local authorities under the Clinical Establishments (Registration and Regulation) Act, 2010, or under the enactments specified under Schedule of Section 56(1) of the said Act. OR 2. It complies with all the following minimum criteria: i. Has qualified nursing staff employed round the clock. ii. Has at least ten inpatient beds in towns with a population of less than ten lacs, and fifteen inpatient beds in all other places. iii. Has qualified medical practitioner(s) in charge round the clock. iv. Has its own fully equipped operation theatre where surgical procedures are carried out. v. Maintains daily records of patients and makes them accessible to the Company's authorized personnel.","The extent of coverage for AYUSH treatments is up to the Sum Insured (SI) for each policy period. This coverage applies to inpatient care treatments under Ayurveda, Yoga and Naturopathy, Unani, Siddha, and Homeopathy systems of medicine, provided they are received in an AYUSH Hospital. This limit is consistent across Plan A, Plan B, and Plan C.","Yes, for Plan A, there are specific sub-limits on room rent and ICU charges per day per insured person. For room charges, the limit is up to 1% of the Sum Insured (SI) or the actual charge, whichever is lower. For ICU charges, the limit is up to 2% of the Sum Insured (SI) or the actual charge, whichever is lower."]}
+manid@MANIDEEP MINGW64 ~
+$ ^C
+
+manid@MANIDEEP MINGW64 ~
+$ curl -X POST https://finalllllll.onrender.com/hackrx/run \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -H "Authorization: Bearer 9953d967b81381295864fb71b20cd27085ee80c24512eeabce64f3f921bb009d" \
+  -d '{
+    "documents": "https://hackrx.blob.core.windows.net/assets/policy.pdf?sv=2023-01-03&st=2025-07-04T09%3A11%3A24Z&se=2027-07-05T09%3A11%3A00Z&sr=b&sp=r&sig=N4a9OU0w0QXO6AOIBiu4bpl7AXvEZogeT%2FjUHNO7HzQ%3D",
+    "questions": [
+      "What are the exclusions under the National Parivar Mediclaim Plus Policy?",
+      "Does the policy cover pre and post-hospitalization expenses? If so, for how many days?",
+      "What is the co-payment clause mentioned in the policy?",
+      "Are dental treatments covered under this policy?",
+      "Is there a limit on ambulance charges under the policy?",
+      "What is the policy’s coverage for day care procedures?",
+      "Does the policy provide coverage for mental illness or psychiatric treatment?",
+      "What is the policy’s stance on coverage for COVID-19 or other pandemics?",
+      "What are the conditions for policy portability or migration?",
+      "Are annual health checkups mandatory for renewal or optional?"
+    ]
+  }'
+{"detail":"There was an error parsing the body"}
+manid@MANIDEEP MINGW64 ~
+$ ^C
+
+manid@MANIDEEP MINGW64 ~
